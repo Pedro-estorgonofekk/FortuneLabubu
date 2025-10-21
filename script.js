@@ -1,12 +1,12 @@
 // variáveis principais
-const radios = document.querySelectorAll("input[name='radioAposta']");
-const divTipoAposta = document.getElementById("tipoDeAposta");
-const divResultadoAposta = document.getElementById("resultadoAposta");
-const saldoTexto = document.getElementById("dinheiro");
+const radios = document.querySelectorAll("input[name='radioAposta']")
+const divTipoAposta = document.getElementById("tipoDeAposta")
+const divResultadoAposta = document.getElementById("resultadoAposta")
+const saldoTexto = document.getElementById("dinheiro")
 let dinheiro = 100;
-let tipoAposta = "";
+let tipoAposta = ""
 
-// lista da roleta
+// lista da roleta não pode ser criado automaticament pois existes casos como o 10 e 11 que são vermelhos 
 const roleta = [
     { numero: 0, cor: "verde" },
     { numero: 1, cor: "vermelho" },
@@ -46,7 +46,7 @@ const roleta = [
     { numero: 35, cor: "preto" },
     { numero: 36, cor: "vermelho" }
 ];
-
+// variavel que associa as chaves com seus respectivos valores 
 const cores = {
     vermelho: "red",
     preto: "black",
@@ -57,7 +57,7 @@ const cores = {
 function AtualizarSaldo() {
     saldoTexto.innerText = `Saldo R$${dinheiro.toFixed(2)}`;
 }
-
+// atualiza pra exibir quando a pagina for carregada
 AtualizarSaldo();
 
 // Gera cor e número aleatório
@@ -67,17 +67,21 @@ function GirarRoleta() {
     return { numAleatorio, corSorteada };
 }
 
-// Função principal do giro
+// Função principal do giro com as variaveis locais
 function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
+    // index é onde o giro esta passando
     let index = 0;
     let velocidade = 50;
 
+    //função principal do giro
     function loop(p) {
         if (p > totalPassos) {
+            //se for verdadeiro significa que acabou o giro
             const resultado = roleta[numAleatorio];
             divResultadoAposta.textContent = `${resultado.numero} - ${resultado.cor.toUpperCase()}`;
             divResultadoAposta.style.color = cores[resultado.cor];
 
+            //função de espera que vai executar uma função anonima dps de 1 segundo de espera
             setTimeout(() => {
                 const valorApostado = Number(document.getElementById("valorApostado").value);
                 if (valorApostado > dinheiro || valorApostado <= 0) {
@@ -86,10 +90,10 @@ function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
                     return;
                 }
 
-                // Cálculo de peso
+                // Cálculo de peso que será baseado em quanto dinheiro o jogador tem
                 var peso = dinheiro + (0.5 * (valorApostado * 2));
 
-                // --- Verificação de aposta ---
+                // verificação de aposta, se ela é valida, ou se o jogador ganhou ou perdeu 
                 if (tipoAposta === "cor") {
                     const corEscolhida = document.getElementById("inputCor").value;
 
@@ -118,7 +122,7 @@ function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
                     }
                 }
 
-                // Atualiza saldo
+                // Atualiza saldo só no final pra evitar de chamar ela toda vez
                 AtualizarSaldo();
 
                 // Se o jogador ficou sem dinheiro
@@ -130,7 +134,7 @@ function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
 
                 botao.disabled = false;
             }, 1000);
-
+            // volta ao normal
             return;
         }
 
@@ -140,19 +144,25 @@ function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
         divResultadoAposta.style.color = cores[atual.cor];
         divResultadoAposta.style.textAlign = "center";
 
-
-        if (p > totalPassos - 10) velocidade += 80;
-        else if (p > totalPassos - 20) velocidade += 40;
-        else if (p > totalPassos - 30) velocidade += 20;
-
+        
+        if (p > totalPassos - 10){
+            velocidade += 80;
+        }else if (p > totalPassos - 20) {
+            velocidade += 40;
+        }else if (p > totalPassos - 30){
+            velocidade += 20;
+        }
+        
+        //sempre adiciona 1 ao index
         index++;
+        // executa uma função anonima que chama a função loop que vai receber p + 1, e a velocidade
         setTimeout(() => loop(p + 1), velocidade);
     }
-
+    //passa pra função loop a variavel passos
     loop(passos);
 }
 
-// Principal
+// Principal para cada mudança no radio aparece opções diferentes
 radios.forEach(radio => {
     radio.addEventListener("change", () => {
         tipoAposta = radio.value;
@@ -167,6 +177,8 @@ radios.forEach(radio => {
                 <br>
                 <input type="button" id="botao" value="Jogar!">
             `;
+
+            //estilização
             const corEscolhida = document.getElementById("inputCor")
 
             corEscolhida.style.fontFamily = "'Segoe UI Black', sans-serif"
@@ -202,6 +214,7 @@ radios.forEach(radio => {
                 <input type="button" id="botao" value="Jogar!">
             `;
 
+            //estilização
             const numeroEscolhido = document.getElementById("inputNumero")
 
             numeroEscolhido.style.fontFamily = "'Segoe UI Black', sans-serif"
@@ -229,15 +242,21 @@ radios.forEach(radio => {
             botao.style.marginLeft = "27px"
             botao.style.marginTop = "10px"
         }
-
+        
         const botao = document.getElementById("botao");
+        //escuta se havera um click no botao
         botao.addEventListener("click", () => {
+            //vai desabilitar pra fazer a animação
             botao.disabled = true;
 
+            //descontrução (não entendi direito como funciona(feito pelo GPT))
+            // compreendi que as variaveis vão ser retornadas pela função nesse momento aqui, se fossem chamadas antes daria erro de escopo
             const { numAleatorio, corSorteada } = GirarRoleta();
             const totalPassos = roleta.length * 3 + numAleatorio;
+            //chamando a função e passando as variaveis pra ela
             Girar(0, totalPassos, numAleatorio, botao, corSorteada);
         });
     });
 });
+
 
