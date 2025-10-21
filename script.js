@@ -3,6 +3,7 @@ const radios = document.querySelectorAll("input[name='radioAposta']")
 const divTipoAposta = document.getElementById("tipoDeAposta")
 const divResultadoAposta = document.getElementById("resultadoAposta")
 const saldoTexto = document.getElementById("dinheiro")
+const audio = new Audio('Style/sound_ui_csgo_ui_crate_item_scroll.wav')
 let dinheiro = 100;
 let tipoAposta = ""
 
@@ -80,6 +81,7 @@ function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
             const resultado = roleta[numAleatorio];
             divResultadoAposta.textContent = `${resultado.numero} - ${resultado.cor.toUpperCase()}`;
             divResultadoAposta.style.color = cores[resultado.cor];
+            audio.play()
 
             //função de espera que vai executar uma função anonima dps de 1 segundo de espera
             setTimeout(() => {
@@ -143,6 +145,7 @@ function Girar(passos, totalPassos, numAleatorio, botao, corSorteada) {
         divResultadoAposta.textContent = `${atual.numero} - ${atual.cor.toUpperCase()}`;
         divResultadoAposta.style.color = cores[atual.cor];
         divResultadoAposta.style.textAlign = "center";
+        audio.play()
 
         
         if (p > totalPassos - 10){
@@ -258,5 +261,6 @@ radios.forEach(radio => {
         });
     });
 });
+
 
 
